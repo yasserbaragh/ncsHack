@@ -1,5 +1,3 @@
-// clientProfileDataController.js
-
 const db = require('../db');
 
 exports.createProfileClient = async (req, res) => {

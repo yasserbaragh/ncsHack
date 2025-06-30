@@ -1,6 +1,11 @@
 // projectsController.js
 const db = require('../db'); // Assumes db connection/pool is exported from this module
+const Chargily = require('@chargily/chargily-pay');
 
+var client = new Chargily.ChargilyClient({
+    api_key: process.env.PAY_SEC,
+    mode: 'test'
+});
 
 exports.addProject = async (req, res) => {
     const { id, investor_id, title, description, reward_amount, deadline, is_tender } = req.body;
@@ -10,7 +15,26 @@ exports.addProject = async (req, res) => {
              VALUES (?, ?, ?, ?, ?, ?, ?)`,
             [id, investor_id, title, description, reward_amount, deadline, is_tender]
         );
-        res.status(201).json({ message: 'Project created' });
+
+        const paymentLink = await client.createPaymentLink({
+            name: 'Product Payment',
+            items: [
+                {
+                    price: reward_amount,
+                    quantity: 1,
+                    adjustable_quantity: false,
+                },
+            ],
+            after_completion_message: 'Thank you for your payement!',
+            locale: 'en',
+            pass_fees_to_customer: true,
+            collect_shipping_address: false
+        });
+
+        const linkDetails = await client.getPaymentLink(paymentLink.id);
+        return res.status(302).redirect(linkDetails.short_url);
+
+        return res.status(201).json({ link: paymentLink });
     } catch (err) {
         res.status(500).json({ error: 'Failed to create project' });
     }

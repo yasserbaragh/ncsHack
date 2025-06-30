@@ -1,5 +1,3 @@
-// adminsController.js
-
 const db = require('../db');
 
 exports.createAdmin = async (req, res) => {

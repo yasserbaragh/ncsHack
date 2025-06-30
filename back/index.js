@@ -1,5 +1,9 @@
 const express = require('express');
 require('dotenv').config();
+const bodyParser = require('body-parser');
+const { verifySignature } = require('@chargily/chargily-pay');
+
+const API_SECRET_KEY = process.env.PAY_SEC;
 
 const cors = require('cors');
 
@@ -16,6 +20,14 @@ app.use(cors(corsOptions));
 
 app.use(express.json({ limit: "100mb" }));
 app.use(express.urlencoded({ limit: "100mb", extended: true }));
+
+app.use(
+  bodyParser.json({
+    verify: function (req, res, buf) {
+      req.rawBody = buf;
+    },
+  })
+);
 
 // Import routes
 const investorsRoutes = require('./routes/investors');
@@ -44,6 +56,36 @@ app.use('/client-qcm', clientQcmRoutes);
 app.use('/client-profile', clientProfileDataRoutes);
 app.use('/users', usersRoutes);
 app.use('/admins', adminsRoutes);
+
+app.post('/webhook', function (req, res) {
+  const signature = req.get('signature') || '';
+  const payload = req.rawBody;
+
+  if (!signature) {
+    console.log('Signature header is missing');
+    res.sendStatus(400);
+    return;
+  }
+
+  try {
+    if (!verifySignature(payload, signature, API_SECRET_KEY)) {
+      console.log('Signature is invalid');
+      res.sendStatus(403);
+      return;
+    }
+  } catch (error) {
+    console.log(
+      'Something happened while trying to process the request to the webhook'
+    );
+    res.sendStatus(403);
+    return;
+  }
+
+  const event = req.body;
+  console.log(event); // You can use event.type to handle logic
+
+  res.sendStatus(200);
+});
 
 
 app.listen(port, () => {

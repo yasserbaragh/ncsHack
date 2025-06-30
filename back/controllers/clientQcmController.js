@@ -1,8 +1,4 @@
-// clientQcmController.js
-
 const db = require('../db');
-
-
 
 exports.addQcmClient = async (req, res) => {
     const { id, client_id, qcm_id } = req.body;

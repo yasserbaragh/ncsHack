@@ -1,6 +1,11 @@
 const db = require('../db');
+const Chargily = require('@chargily/chargily-pay');
 
-// Create and Save a new Submission
+var client = new Chargily.ChargilyClient({
+    api_key: process.env.PAY_SEC,
+    mode: 'test'
+});
+
 exports.create = async (req, res) => {
     const { id, client_id, project_id, github_link, description, points_awarded, status } = req.body;
     try {
@@ -15,7 +20,6 @@ exports.create = async (req, res) => {
     }
 };
 
-// Retrieve all Submissions from the database.
 exports.getAll = async (req, res) => {
     try {
         const [rows] = await db.query('SELECT * FROM submissions');
@@ -25,7 +29,6 @@ exports.getAll = async (req, res) => {
     }
 };
 
-// Find a single Submission with an id
 exports.getById = async (req, res) => {
     const { id } = req.params;
     try {
@@ -37,7 +40,6 @@ exports.getById = async (req, res) => {
     }
 };
 
-// Update a Submission by the id in the request
 exports.update = async (req, res) => {
     const { id } = req.params;
     const { github_link, description, points_awarded, status } = req.body;
@@ -52,7 +54,6 @@ exports.update = async (req, res) => {
     }
 };
 
-// Delete a Submission with the specified id in the request
 exports.delete = async (req, res) => {
     const { id } = req.params;
     try {
@@ -70,7 +71,25 @@ exports.acceptSubmission = async (req, res) => {
             `UPDATE submissions SET status = 'accepted' WHERE id = ?`,
             [id]
         );
-        res.json({ message: 'Submission accepted' });
+        const paymentLink = await client.createPaymentLink({
+            name: 'Product Payment',
+            items: [
+                {
+                    price: reward_amount,
+                    quantity: 1,
+                    adjustable_quantity: false,
+                },
+            ],
+            after_completion_message: 'Thank you for your payement!',
+            locale: 'en',
+            pass_fees_to_customer: true,
+            collect_shipping_address: false
+        });
+
+        const linkDetails = await client.getPaymentLink(paymentLink.id);
+        return res.status(302).redirect(linkDetails.short_url);
+
+        res.status(200).json({ link: paymentLink });
     } catch (err) {
         res.status(500).json({ error: 'Failed to accept submission' });
     }
@@ -92,6 +111,7 @@ exports.getAccepted = async (req, res) => {
         const [rows] = await db.query(
             `SELECT * FROM submissions WHERE status = 'accepted'`
         );
+
         res.json(rows);
     } catch (err) {
         res.status(500).json({ error: 'Failed to fetch accepted submissions' });
