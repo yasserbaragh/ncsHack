@@ -2,6 +2,7 @@ const express = require('express');
 require('dotenv').config();
 const bodyParser = require('body-parser');
 const { verifySignature } = require('@chargily/chargily-pay');
+import cookieParser from 'cookie-parser';
 
 const API_SECRET_KEY = process.env.PAY_SEC;
 
@@ -20,6 +21,7 @@ app.use(cors(corsOptions));
 
 app.use(express.json({ limit: "100mb" }));
 app.use(express.urlencoded({ limit: "100mb", extended: true }));
+app.use(cookieParser())
 
 app.use(
   bodyParser.json({
@@ -42,6 +44,8 @@ const clientQcmRoutes = require('./routes/clientQcm');
 const clientProfileDataRoutes = require('./routes/clientProfileData');
 const usersRoutes = require('./routes/users');
 const adminsRoutes = require('./routes/admins');
+import authRoutes from './routes/authRoutes.js';
+
 
 // Use routes
 app.use('/investors', investorsRoutes);
@@ -56,6 +60,7 @@ app.use('/client-qcm', clientQcmRoutes);
 app.use('/client-profile', clientProfileDataRoutes);
 app.use('/users', usersRoutes);
 app.use('/admins', adminsRoutes);
+app.use('/auth', authRoutes);
 
 app.post('/webhook', function (req, res) {
   const signature = req.get('signature') || '';
