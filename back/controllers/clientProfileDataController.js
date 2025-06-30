@@ -1,4 +1,4 @@
-const db = require('../db');
+const db = require('../config/db'); 
 
 exports.createProfileClient = async (req, res) => {
     const { id, client_id, discipline, qcm_responses, submission_history, skill_score } = req.body;

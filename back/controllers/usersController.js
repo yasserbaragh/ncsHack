@@ -1,6 +1,4 @@
-// usersController.js
-
-const db = require('../db');
+const db = require('../config/db'); 
 
 exports.createUser = async (req, res) => {
     const { id, email, password, role, user_ref_id } = req.body;
