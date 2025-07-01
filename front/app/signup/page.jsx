@@ -54,19 +54,26 @@ function GithubIcon(props) {
   );
 }
 
-export default function page() {
+export default function SignUpPage() {
+  // State for controlled components
+  const [firstName, setFirstName] = React.useState("");
+  const [lastName, setLastName] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [rememberMe, setRememberMe] = React.useState(false);
+
   return (
     <div className="flex min-h-screen bg-white">
-      <div className="hidden w-1/2 bg-[#4218ff] lg:block" />
-      <div className="flex flex-1 items-center justify-center p-6 lg:w-1/2">
-        <div className="w-full max-w-md space-y-8">
+      <div className="hidden w-1/2 bg-[#f2f4f8] lg:block" />
+      <div className="flex flex-1 items-center justify-center px-4 py-10 sm:px-8 md:px-12 lg:w-1/2">
+        <div className="w-full max-w-md space-y-10">
           <div>
-            <h1 className="text-4xl font-bold tracking-tight text-[#121619]">
+            <h1 className="mb-6 text-4xl font-bold tracking-tight text-[#121619]">
               Sign <span className="text-[#4218ff]">Up</span>
             </h1>
           </div>
-          <form className="space-y-6">
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <form className="space-y-7">
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
               <div className="space-y-2">
                 <label
                   htmlFor="first-name"
@@ -76,9 +83,11 @@ export default function page() {
                 </label>
                 <InputText
                   id="first-name"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
                   placeholder="Placeholder"
                   required
-                  className="border-0 bg-[#f1ecff] placeholder:text-[#697077] focus:ring-2 focus:ring-[#4218ff]"
+                  className="w-full border-0 bg-[#f1ecff] placeholder:text-[#697077] focus:ring-2 focus:ring-[#4218ff] py-2 px-3"
                 />
               </div>
               <div className="space-y-2">
@@ -90,9 +99,11 @@ export default function page() {
                 </label>
                 <InputText
                   id="last-name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
                   placeholder="Placeholder"
                   required
-                  className="border-0 bg-[#f1ecff] placeholder:text-[#697077] focus:ring-2 focus:ring-[#4218ff]"
+                  className="w-full border-0 bg-[#f1ecff] placeholder:text-[#697077] focus:ring-2 focus:ring-[#4218ff] py-2 px-3"
                 />
               </div>
             </div>
@@ -106,9 +117,11 @@ export default function page() {
               <InputText
                 id="email"
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Placeholder"
                 required
-                className="border-0 bg-[#f1ecff] placeholder:text-[#697077] focus:ring-2 focus:ring-[#4218ff]"
+                className="w-full border-0 bg-[#f1ecff] placeholder:text-[#697077] focus:ring-2 focus:ring-[#4218ff] py-2 px-3"
               />
             </div>
             <div className="space-y-2">
@@ -120,17 +133,21 @@ export default function page() {
               </label>
               <Password
                 id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Placeholder"
                 required
-                inputClassName="border-0 bg-[#f1ecff] placeholder:text-[#697077] focus:ring-2 focus:ring-[#4218ff]"
-                feedback={false}
+                inputClassName="w-full border-0 bg-[#f1ecff] placeholder:text-[#697077] focus:ring-2 focus:ring-[#4218ff] py-2 px-3"
                 toggleMask
+                feedback={false}
               />
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center mt-2 mb-2">
               <Checkbox
                 inputId="remember-me"
-                className="border-[#c1c7cd] data-[state=checked]:bg-[#4218ff] data-[state=checked]:border-[#4218ff]"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.checked)}
+                className="border-[#c1c7cd]"
               />
               <label
                 htmlFor="remember-me"
@@ -139,37 +156,34 @@ export default function page() {
                 Remember Me
               </label>
             </div>
-            <div>
+            <div className="mt-4">
               <Button
                 type="submit"
-                className="w-full bg-[#4218ff] py-3 text-sm font-semibold text-white hover:bg-[#4218ff]/90"
-              >
-                Sign Up
-              </Button>
+                label="Sign Up"
+                className="w-full bg-[#4218ff] py-3 text-sm font-semibold text-white hover:bg-[#4218ff]/90 border-0"
+              />
             </div>
           </form>
-          <div className="relative">
+          <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t border-[#dde1e6]" />
             </div>
           </div>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             <Button
-              variant="outline"
+              label="Log In With Google"
+              icon={<GoogleIcon className="mr-2 h-5 w-5" />}
               className="w-full border-[#4218ff] py-3 text-[#4218ff] hover:bg-[#f1ecff] hover:text-[#4218ff] bg-transparent"
-            >
-              <GoogleIcon className="mr-2 h-5 w-5" />
-              Log In With Google
-            </Button>
+              outlined
+            />
             <Button
-              variant="outline"
+              label="Log In With Github"
+              icon={<GithubIcon className="mr-2 h-5 w-5" />}
               className="w-full border-[#4218ff] py-3 text-[#4218ff] hover:bg-[#f1ecff] hover:text-[#4218ff] bg-transparent"
-            >
-              <GithubIcon className="mr-2 h-5 w-5" />
-              Log In With Github
-            </Button>
+              outlined
+            />
           </div>
-          <div className="text-center">
+          <div className="text-center mt-6">
             <p className="text-sm text-[#b9a3ff]">
               Already have an account?{" "}
               <Link
