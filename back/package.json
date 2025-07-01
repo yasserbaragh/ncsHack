@@ -11,7 +11,12 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@chargily/chargily-pay": "^2.1.0",
     "bcrypt": "^6.0.0",
+<<<<<<< HEAD
+=======
+    "body-parser": "^2.2.0",
+>>>>>>> 922e4ade9a37c126af1a1c53c83861461e061f36
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.0.0",

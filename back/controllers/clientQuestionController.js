@@ -1,8 +1,4 @@
-// clientQuestionController.js
-
-const db = require('../db');
-
-
+const db = require('../config/db'); 
 
 exports.addClientQuestion = async (req, res) => {
     const { id, client_id, question_id, selected_response_id } = req.body;

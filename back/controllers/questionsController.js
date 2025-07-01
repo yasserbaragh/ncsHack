@@ -1,5 +1,4 @@
-// controllers/questionsController.js
-const db = require('../db');
+const db = require('../config/db'); 
 
 exports.addQuestionToQcm = async (req, res) => {
     const { id, qcm_id, question_text } = req.body;

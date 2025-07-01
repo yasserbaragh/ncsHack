@@ -1,6 +1,4 @@
-// adminsController.js
-
-const db = require('../db');
+const db = require('../config/db'); 
 
 exports.createAdmin = async (req, res) => {
     const { id, email, password, name } = req.body;

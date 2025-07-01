@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import db from '../config/db.js';
@@ -22,11 +23,28 @@ export const registerUser = async (req, res) => {
 
   try {
     // Check if user already exists
+=======
+const jwt =require('jsonwebtoken');
+const bcrypt =require('bcrypt');
+const db =require('../config/db');
+
+
+// Register a new user
+exports.registerUser = async (req, res) => {
+  const { email, password, role } = req.body;
+
+  if (!email || !password || !role) {
+    return res.status(400).json({ success: false, message: "All fields are required" });
+  }
+
+  try {
+>>>>>>> 922e4ade9a37c126af1a1c53c83861461e061f36
     const [existing] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
     if (existing.length > 0) {
       return res.status(400).json({ success: false, message: "User already exists" });
     }
 
+<<<<<<< HEAD
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
     const id = uuidv4();
@@ -35,12 +53,49 @@ export const registerUser = async (req, res) => {
     await db.query(
       'INSERT INTO users (id, email, password, role, user_ref_id) VALUES (?, ?, ?, ?, ?)',
       [id, email, hashedPassword, role, user_ref_id]
+=======
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    let user_ref_id = null;
+
+    if (role === "client") {
+      const { firstName, lastName } = req.body;
+      if (!firstName || !lastName) {
+        return res.status(400).json({ success: false, message: "First name and last name are required for client" });
+      }
+
+      // Create client and get its ID
+      const [clientResult] = await db.query(
+        'INSERT INTO clients (first_name, last_name) VALUES (?, ?)',
+        [firstName, lastName]
+      );
+
+      user_ref_id = clientResult.insertId;
+    }
+
+    // Add other role logic if needed here...
+    // For example: else if (role === "investor") { ... }
+
+    // Now insert into users table using the user_ref_id
+    const [userResult] = await db.query(
+      'INSERT INTO users (email, password, role, user_ref_id) VALUES (?, ?, ?, ?)',
+      [email, hashedPassword, role, user_ref_id]
+>>>>>>> 922e4ade9a37c126af1a1c53c83861461e061f36
     );
 
     return res.status(201).json({
       success: true,
       message: "User registered successfully",
+<<<<<<< HEAD
       user: { id, email, role, user_ref_id }
+=======
+      user: {
+        id: userResult.insertId,
+        email,
+        role,
+        user_ref_id
+      }
+>>>>>>> 922e4ade9a37c126af1a1c53c83861461e061f36
     });
   } catch (err) {
     console.error("Register error:", err);
@@ -48,8 +103,15 @@ export const registerUser = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
 // Login a user and return access & refresh tokens
 export const loginUser = async (req, res) => {
+=======
+
+
+// Login a user and return access & refresh tokens
+exports.loginUser = async (req, res) => {
+>>>>>>> 922e4ade9a37c126af1a1c53c83861461e061f36
   const { email, password } = req.body;
 
   try {
@@ -107,7 +169,11 @@ export const loginUser = async (req, res) => {
 };
 
 // Logout user and clear cookies
+<<<<<<< HEAD
 export const logoutUser = async (req, res) => {
+=======
+exports.logoutUser = async (req, res) => {
+>>>>>>> 922e4ade9a37c126af1a1c53c83861461e061f36
   res.clearCookie("accessToken");
   res.clearCookie("refreshToken");
   const { refreshToken } = req.cookies;
@@ -115,7 +181,11 @@ export const logoutUser = async (req, res) => {
 };
 
 // Refresh access token using a valid refresh token
+<<<<<<< HEAD
 export const refreshToken = async (req, res) => {
+=======
+exports.refreshToken = async (req, res) => {
+>>>>>>> 922e4ade9a37c126af1a1c53c83861461e061f36
   const { refreshToken } = req.cookies;
 
   if (!refreshToken) {
@@ -148,7 +218,11 @@ export const refreshToken = async (req, res) => {
 };
 
 // Get the current authenticated user
+<<<<<<< HEAD
 export const getCurrentUser = async (req, res) => {
+=======
+exports.getCurrentUser = async (req, res) => {
+>>>>>>> 922e4ade9a37c126af1a1c53c83861461e061f36
   try {
     const user = req.user;
     return res.status(200).json({
@@ -163,4 +237,8 @@ export const getCurrentUser = async (req, res) => {
   } catch (err) {
     return res.status(500).json({ success: false, message: "Server error" });
   }
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> 922e4ade9a37c126af1a1c53c83861461e061f36

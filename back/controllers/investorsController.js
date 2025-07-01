@@ -1,6 +1,5 @@
-// investorsController.js
 
-const db = require('../db'); // Assume a db connection/pool is exported from this module
+const db = require('../config/db'); 
 
 exports.getAll = async (req, res) => {
     try {
