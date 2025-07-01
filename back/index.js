@@ -2,7 +2,7 @@ const express = require('express');
 require('dotenv').config();
 const bodyParser = require('body-parser');
 const { verifySignature } = require('@chargily/chargily-pay');
-import cookieParser from 'cookie-parser';
+const cookieParser = require('cookie-parser');
 
 const API_SECRET_KEY = process.env.PAY_SEC;
 
@@ -44,7 +44,7 @@ const clientQcmRoutes = require('./routes/clientQcm');
 const clientProfileDataRoutes = require('./routes/clientProfileData');
 const usersRoutes = require('./routes/users');
 const adminsRoutes = require('./routes/admins');
-import authRoutes from './routes/authRoutes.js';
+const authRoutes =require('./routes/authRoutes.js');
 
 
 // Use routes

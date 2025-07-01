@@ -1,11 +1,12 @@
 "use client";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
-import { Checkbox } from "primereact/checkbox";
 import { Button } from "primereact/button";
 import Link from "next/link";
 import React from "react";
+import { api } from "@/data";
 
+// Icons
 function GoogleIcon(props) {
   return (
     <svg
@@ -55,24 +56,49 @@ function GithubIcon(props) {
 }
 
 export default function SignUpPage() {
-  // State for controlled components
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const [rememberMe, setRememberMe] = React.useState(false);
+  const [role] = React.useState("client");
+
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState(null);
+  const [success, setSuccess] = React.useState(false);
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
+    try {
+      const res = await fetch(`${api}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ firstName, lastName, email, password, role }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Signup failed");
+      }
+      setSuccess(true);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="flex min-h-screen bg-white">
-      <div className="hidden w-1/2 bg-[#f2f4f8] lg:block" />
-      <div className="flex flex-1 items-center justify-center px-4 py-10 sm:px-8 md:px-12 lg:w-1/2">
-        <div className="w-full max-w-md space-y-10">
-          <div>
-            <h1 className="mb-6 text-4xl font-bold tracking-tight text-[#121619]">
-              Sign <span className="text-[#4218ff]">Up</span>
-            </h1>
-          </div>
-          <form className="space-y-7">
+      <div className="hidden w-1/2 bg-[#4218ff] lg:block" />
+      <div className="flex flex-1 items-center justify-center p-6 lg:w-1/2">
+        <div className="w-full max-w-md space-y-8">
+          <h1 className="text-4xl font-bold tracking-tight text-[#121619]">
+            Sign <span className="text-[#4218ff]">Up</span>
+          </h1>
+
+          <form className="space-y-7" onSubmit={handleSignup}>
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
               <div className="space-y-2">
                 <label
@@ -85,9 +111,9 @@ export default function SignUpPage() {
                   id="first-name"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="Placeholder"
+                  placeholder="Enter your first name"
                   required
-                  className="w-full border-0 bg-[#f1ecff] placeholder:text-[#697077] focus:ring-2 focus:ring-[#4218ff] py-2 px-3"
+                  className="w-full border-0 bg-[#f1ecff] py-2 px-3 placeholder:text-[#697077] focus:ring-2 focus:ring-[#4218ff]"
                 />
               </div>
               <div className="space-y-2">
@@ -95,18 +121,19 @@ export default function SignUpPage() {
                   htmlFor="last-name"
                   className="text-sm font-medium text-[#21272a]"
                 >
-                  Second Name
+                  Last Name
                 </label>
                 <InputText
                   id="last-name"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  placeholder="Placeholder"
+                  placeholder="Enter your last name"
                   required
-                  className="w-full border-0 bg-[#f1ecff] placeholder:text-[#697077] focus:ring-2 focus:ring-[#4218ff] py-2 px-3"
+                  className="w-full border-0 bg-[#f1ecff] py-2 px-3 placeholder:text-[#697077] focus:ring-2 focus:ring-[#4218ff]"
                 />
               </div>
             </div>
+
             <div className="space-y-2">
               <label
                 htmlFor="email"
@@ -119,11 +146,12 @@ export default function SignUpPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Placeholder"
+                placeholder="Enter your email"
                 required
-                className="w-full border-0 bg-[#f1ecff] placeholder:text-[#697077] focus:ring-2 focus:ring-[#4218ff] py-2 px-3"
+                className="w-full border-0 bg-[#f1ecff] py-2 px-3 placeholder:text-[#697077] focus:ring-2 focus:ring-[#4218ff]"
               />
             </div>
+
             <div className="space-y-2">
               <label
                 htmlFor="password"
@@ -135,54 +163,53 @@ export default function SignUpPage() {
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Placeholder"
+                placeholder="Enter password"
                 required
-                inputClassName="w-full border-0 bg-[#f1ecff] placeholder:text-[#697077] focus:ring-2 focus:ring-[#4218ff] py-2 px-3"
+                inputClassName="w-full border-0 bg-[#f1ecff] py-2 px-3 placeholder:text-[#697077] focus:ring-2 focus:ring-[#4218ff]"
                 toggleMask
                 feedback={false}
               />
             </div>
-            <div className="flex items-center mt-2 mb-2">
-              <Checkbox
-                inputId="remember-me"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.checked)}
-                className="border-[#c1c7cd]"
-              />
-              <label
-                htmlFor="remember-me"
-                className="ml-2 block text-sm text-[#21272a]"
-              >
-                Remember Me
-              </label>
-            </div>
-            <div className="mt-4">
-              <Button
-                type="submit"
-                label="Sign Up"
-                className="w-full bg-[#4218ff] py-3 text-sm font-semibold text-white hover:bg-[#4218ff]/90 border-0"
-              />
-            </div>
+
+            <Button
+              type="submit"
+              label={loading ? "Signing Up..." : "Sign Up"}
+              className="w-full bg-[#4218ff] py-3 text-sm font-semibold text-white hover:bg-[#4218ff]/90 border-0"
+              disabled={loading}
+            />
+
+            {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
+            {success && (
+              <div className="text-green-600 text-sm mt-2">
+                Signup successful!
+              </div>
+            )}
           </form>
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-[#dde1e6]" />
-            </div>
+
+          <div className="relative flex items-center justify-center my-4">
+            <span className="w-full border-t border-[#dde1e6]" />
+            <span className="absolute bg-white px-2 text-sm text-[#697077]">
+              or
+            </span>
           </div>
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Button
-              label="Log In With Google"
-              icon={<GoogleIcon className="mr-2 h-5 w-5" />}
-              className="w-full border-[#4218ff] py-3 text-[#4218ff] hover:bg-[#f1ecff] hover:text-[#4218ff] bg-transparent"
               outlined
-            />
+              className="w-full border-[#4218ff] py-3 text-[#4218ff] bg-transparent hover:bg-[#f1ecff]"
+            >
+              <GoogleIcon className="mr-2 h-5 w-5" />
+              Log In With Google
+            </Button>
             <Button
-              label="Log In With Github"
-              icon={<GithubIcon className="mr-2 h-5 w-5" />}
-              className="w-full border-[#4218ff] py-3 text-[#4218ff] hover:bg-[#f1ecff] hover:text-[#4218ff] bg-transparent"
               outlined
-            />
+              className="w-full border-[#4218ff] py-3 text-[#4218ff] bg-transparent hover:bg-[#f1ecff]"
+            >
+              <GithubIcon className="mr-2 h-5 w-5" />
+              Log In With Github
+            </Button>
           </div>
+
           <div className="text-center mt-6">
             <p className="text-sm text-[#b9a3ff]">
               Already have an account?{" "}

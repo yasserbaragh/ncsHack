@@ -1,4 +1,4 @@
-const db = require('../db');
+const db = require('../config/db'); 
 
 exports.addQcmClient = async (req, res) => {
     const { id, client_id, qcm_id } = req.body;

@@ -1,7 +1,4 @@
-
-// qcmsController.js
-
-const db = require('../db');
+const db = require('../config/db'); 
 
 exports.addQcm = async (req, res) => {
     const { id, title, created_by, niche } = req.body;

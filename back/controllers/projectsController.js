@@ -1,5 +1,5 @@
-// projectsController.js
-const db = require('../db'); // Assumes db connection/pool is exported from this module
+
+const db = require('../config/db'); 
 const Chargily = require('@chargily/chargily-pay');
 
 var client = new Chargily.ChargilyClient({

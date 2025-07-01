@@ -1,5 +1,4 @@
-// clientsController.js
-const db = require('../db');
+const db = require('../config/db'); 
 
 exports.createClient = async (req, res) => {
     const { id, first_name, last_name, is_startup, total_earned, investor_ids } = req.body;

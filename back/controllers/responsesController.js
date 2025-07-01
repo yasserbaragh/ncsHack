@@ -1,5 +1,4 @@
-// responsesController.js
-const db = require('../db');
+const db = require('../config/db'); 
 
 exports.addResponseToQuestion = async (req, res) => {
     const { id, question_id, response_text, is_correct } = req.body;
